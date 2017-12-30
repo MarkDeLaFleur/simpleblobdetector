@@ -39,7 +39,10 @@ class SimpleBlobDetector {
 
   findBlobs(image, binaryImage) {
     const contours = new cv.MatVector();
-    cv.findContours(binaryImage, contours, new cv.Mat(), cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
+    const hierarchy = new cv.Mat();
+    cv.findContours(binaryImage, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
+    hierarchy.delete();
+
     const centers = [];
     for (let i = 0; i < contours.size(); i++) {
       const contour = contours.get(i);
@@ -128,8 +131,8 @@ class SimpleBlobDetector {
   }
 
   detect(image) {
-    this._grayscaleImage = this._grayscaleImage || new cv.Mat(image.rows, image.cols, cv.CV_8UC1);
-    cv.cvtColor(image, this._grayscaleImage, cv.COLOR_BGR2GRAY);
+    const grayScaleImage = new cv.Mat(image.rows, image.cols, cv.CV_8UC1);
+    cv.cvtColor(image, grayScaleImage, cv.COLOR_BGR2GRAY);
 
     let centers = [];
     for (
@@ -137,9 +140,10 @@ class SimpleBlobDetector {
       thresh < this._params.maxThreshold;
       thresh += this._params.thresholdStep
     ) {
-      this._binaryImage = this._binaryImage || new cv.Mat(image.rows, image.cols, cv.CV_8UC1);
-      cv.threshold(this._grayscaleImage, this._binaryImage, thresh, 255, cv.THRESH_BINARY);
-      let curCenters = this.findBlobs(image, this._binaryImage);
+      const binaryImage = new cv.Mat(image.rows, image.cols, cv.CV_8UC1);
+      cv.threshold(grayScaleImage, binaryImage, thresh, 255, cv.THRESH_BINARY);
+      let curCenters = this.findBlobs(image, binaryImage);
+      binaryImage.delete();
       let newCenters = [];
 
       for (let i = 0; i < curCenters.length; i++) {
@@ -170,6 +174,8 @@ class SimpleBlobDetector {
       centers = centers.concat(newCenters);
     }
 
+    grayScaleImage.delete();
+
     const keyPoints = [];
     for (let i = 0; i < centers.length; i++) {
       if (centers[i].length < this._params.minRepeatability) continue;
@@ -187,6 +193,7 @@ class SimpleBlobDetector {
         size: centers[i][Math.floor(centers[i].length / 2)].radius * 2,
       });
     }
+
     return keyPoints;
   }
 }
