@@ -54,8 +54,10 @@ function findBlobs(image, binaryImage, params) {
   hierarchy.delete();
 
   const centers = [];
+  const objectsToDelete = [];
   for (let i = 0; i < contours.size(); i++) {
     const contour = contours.get(i);
+    objectsToDelete.push(contour);
     const area = cv.contourArea(contour);
 
     if (area == 0) continue;
@@ -149,6 +151,7 @@ function findBlobs(image, binaryImage, params) {
 
     centers.push(center);
   }
+  objectsToDelete.forEach(obj => obj.delete());
   contours.delete();
   return centers;
 }
@@ -212,10 +215,15 @@ export default function simpleBlobDetector(image, params) {
     }
     sumPoint.x *= 1 / normalizer;
     sumPoint.y *= 1 / normalizer;
-    keyPoints.push({
-      pt: sumPoint,
-      size: centers[i][Math.floor(centers[i].length / 2)].radius * 2,
-    });
+    let size = Math.round(centers[i][Math.floor(centers[i].length / 2)].radius * 2);
+    size = Math.min(
+      size,
+      sumPoint.x * 2,
+      sumPoint.y * 2,
+      (image.cols - sumPoint.x) * 2,
+      (image.rows - sumPoint.y) * 2
+    );
+    keyPoints.push({ pt: sumPoint, size });
   }
 
   return keyPoints;
