@@ -1,0 +1,20 @@
+{
+  "name": "@markdelafleur/simpleblobdetector",
+  "version": "1.0.0",
+  "description": "simpleblobdetecto",
+  "main": "SimpleBlobDetector.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarkDeLaFleur/simpleblobdetector.git"
+  },
+  "publishConfig": {"registry": "https://npm.pkg.github.com/markdelafleur"},
+  "author": "author",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarkDeLaFleur/simpleblobdetector/issues"
+  },
+  "homepage": "https://github.com/MarkDeLaFleur/simpleblobdetector#readme"
+}
