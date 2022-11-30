@@ -2,8 +2,8 @@
   "name": "@markdelafleur/simpleblobdetector",
   "version": "1.0.0",
   "description": "simpleblobdetecto",
-  "main": "SimpleBlobDetector.js",
   "type": "module",
+  "main": "SimpleBlobDetector.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
